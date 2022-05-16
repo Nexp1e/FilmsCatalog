@@ -7,7 +7,7 @@ namespace FilmsCatalog.Services.Movies
     {
         public Task<MoviesIndexViewModel> GetAllMovies();
         public Task<MovieDetailsViewModel> GetMovieDetails(int id);
-        public Task AddMovie(AddMovieViewModel model);
+        public Task AddMovie(AddMovieViewModel model, string userId);
         public Task EditMovie(EditMovieViewModel model);
     }
 }

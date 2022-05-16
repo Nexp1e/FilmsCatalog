@@ -1,13 +1,57 @@
-﻿using FilmsCatalog.Models.Movies;
+﻿using FilmsCatalog.Models;
+using FilmsCatalog.Models.Movies;
+using FilmsCatalog.Repositories.Movies;
+using Microsoft.AspNetCore.Hosting;
+using System;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FilmsCatalog.Services.Movies
 {
     public class MovieService : IMovieService
     {
-        public Task AddMovie(AddMovieViewModel model)
+        private readonly IMovieRepository _rep;
+        private readonly IWebHostEnvironment _environment;
+
+        private static string[] AllowedPosterFileExtensions { get; set; } = { "jpg", "jpeg", "png" };
+
+        public MovieService(IMovieRepository rep, IWebHostEnvironment environment)
         {
-            throw new System.NotImplementedException();
+            _rep = rep;
+            _environment = environment;
+        }
+
+        public async Task AddMovie(AddMovieViewModel model, string userId)
+        {
+            var isFileAttached = model.File != null;
+            var fileNameWithPath = string.Empty;
+
+            if (isFileAttached)
+            {
+                var extension = Path.GetExtension(model.File.FileName).Replace(".", "");
+                if (!AllowedPosterFileExtensions.Contains(extension))
+                {
+                    throw new ArgumentException("Attached file's extention is not supported");
+                }
+                fileNameWithPath = $"files/{Guid.NewGuid()}-{model.File.FileName}";
+                using (var fs = new FileStream(Path.Combine(_environment.WebRootPath, fileNameWithPath), FileMode.Create))
+                {
+                    await model.File.CopyToAsync(fs);
+                }
+            }
+
+            var newMovie = new Movie
+            {
+                Title = model.Title,
+                Description = model.Description,
+                ReleaseYear = model.ReleaseYear,
+                Director = model.Director,
+                PosterPath = fileNameWithPath,
+                UserId = userId
+            };
+
+            await _rep.AddMovie(newMovie);
         }
 
         public Task EditMovie(EditMovieViewModel model)
@@ -15,9 +59,24 @@ namespace FilmsCatalog.Services.Movies
             throw new System.NotImplementedException();
         }
 
-        public Task<MoviesIndexViewModel> GetAllMovies()
+        public async Task<MoviesIndexViewModel> GetAllMovies()
         {
-            throw new System.NotImplementedException();
+            var movies = await _rep.GetAllMovies();
+
+            var VM = new MoviesIndexViewModel();
+
+            foreach (var movie in movies)
+            {
+                VM.Movies.Add(new MoviePreviewViewModel
+                {
+                    Id = movie.Id,
+                    Title = movie.Title,
+                    ReleaseYear = movie.ReleaseYear,
+                    Director = movie.Director,
+                });
+            }
+
+            return VM;
         }
 
         public Task<MovieDetailsViewModel> GetMovieDetails(int id)
