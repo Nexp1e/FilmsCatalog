@@ -18,5 +18,6 @@ namespace FilmsCatalog.Models.Movies
         [Required]
         [Display(Name = "Режиссер")]
         public string Director { get; set; }
+        public bool IsEditable { get; set; }
     }
 }

@@ -55,6 +55,42 @@ namespace FilmsCatalog.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            var model = await _movieService.GetMovieEditModel((int)id, userId);
+
+            if (model == null)
+            {
+                return NotFound();
+            }
+            if (!model.IsEditable)
+            {
+                return Unauthorized();
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> Edit(EditMovieViewModel model)
+        {
+            var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            await _movieService.EditMovie(model, userId);
+
+            return RedirectToAction("Index");
+        }
         
         [HttpPost]
         [ValidateAntiForgeryToken]
