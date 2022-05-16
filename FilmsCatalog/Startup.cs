@@ -1,5 +1,6 @@
 using FilmsCatalog.Data;
 using FilmsCatalog.Models;
+using FilmsCatalog.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -32,6 +33,9 @@ namespace FilmsCatalog
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.RegisterServices();
+            services.RegisterRepositories();
 
             services.AddDatabaseDeveloperPageExceptionFilter();            
             services.AddControllersWithViews();
