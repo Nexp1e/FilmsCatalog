@@ -19,13 +19,17 @@
                             <p class=" text-uppercase h5">@movie.Title, @movie.ReleaseYear</p>
                         </div>
                         <div class="col-12">
-                            <p class="mb-1">@movie.Director</p>
+                            <p class="mb-1">Режиссер: @movie.Director</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-md-2 text-right">
                     <div class="btn-group" role="group">
-                        <a class="btn btn-outline-warning" asp-controller="Home" asp-action="Edit" asp-route-id="@movie.Id"><i class="bi bi-pencil"></i></a>
+                        @if (movie.IsEditable)
+                        {
+                           <a class="btn btn-outline-warning" asp-controller="Home" asp-action="Edit" asp-route-id="@movie.Id"><i class="bi bi-pencil"></i></a>
+                        }
+                        <a class="btn btn-outline-primary" asp-controller="Home" asp-action="Details" asp-route-id="@movie.Id"><i class="bi bi-info-circle"></i></a>
                     </div>
                 </div>
             </div>

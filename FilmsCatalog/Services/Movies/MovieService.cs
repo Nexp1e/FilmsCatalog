@@ -54,12 +54,12 @@ namespace FilmsCatalog.Services.Movies
             await _rep.AddMovie(newMovie);
         }
 
-        public Task EditMovie(EditMovieViewModel model)
+        public Task EditMovie(EditMovieViewModel model, string userId)
         {
             throw new System.NotImplementedException();
         }
 
-        public async Task<MoviesIndexViewModel> GetAllMovies()
+        public async Task<MoviesIndexViewModel> GetAllMovies(string userId)
         {
             var movies = await _rep.GetAllMovies();
 
@@ -73,15 +73,34 @@ namespace FilmsCatalog.Services.Movies
                     Title = movie.Title,
                     ReleaseYear = movie.ReleaseYear,
                     Director = movie.Director,
+                    IsEditable = (userId == movie.UserId)
                 });
             }
 
             return VM;
         }
 
-        public Task<MovieDetailsViewModel> GetMovieDetails(int id)
+        public async Task<MovieDetailsViewModel> GetMovieDetails(int id, string userId)
         {
-            throw new System.NotImplementedException();
+            var movie = await _rep.GetMovieById(id);
+
+            if (movie == null)
+            {
+                return null;
+            }
+
+            var VM = new MovieDetailsViewModel
+            {
+                Id = movie.Id,
+                Title = movie.Title,
+                Description = movie.Description,
+                ReleaseYear = movie.ReleaseYear,
+                Director = movie.Director,
+                PosterPath = movie.PosterPath,
+                IsEditable = (userId == movie.UserId)
+            };
+
+            return VM;
         }
     }
 }

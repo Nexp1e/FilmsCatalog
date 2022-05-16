@@ -4,6 +4,5 @@
     {
         public string Description { get; set; }
         public string PosterPath { get; set; }
-        public string AddedByInfo { get; set; }
     }
 }

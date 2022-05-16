@@ -27,7 +27,24 @@ namespace FilmsCatalog.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var model = await _movieService.GetAllMovies();
+            var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            var model = await _movieService.GetAllMovies(userId);
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            var model = await _movieService.GetMovieDetails((int)id, userId);
 
             return View(model);
         }
