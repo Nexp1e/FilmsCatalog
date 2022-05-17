@@ -37,5 +37,15 @@ namespace FilmsCatalog.Repositories.Movies
         {
             return await _db.Movies.Where(x => x.Id == id).FirstOrDefaultAsync();
         }
+
+        public async Task<int> GetMovieCount()
+        {
+            return await _db.Movies.CountAsync();
+        }
+
+        public async Task<List<Movie>> GetMoviePage(int pageNumber, int moviesPerPage)
+        {
+            return await _db.Movies.Skip((pageNumber - 1) * moviesPerPage).Take(moviesPerPage).ToListAsync();
+        }
     }
 }

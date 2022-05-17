@@ -8,7 +8,7 @@
 {
     <a class="btn btn-primary mb-3" asp-controller="Home" asp-action="Add">Добавить фильм</a>
 }
-<ul class="list-group mb-1">
+<ul class="list-group mb-3">
     @foreach (var movie in Model.Movies)
     {
         <li class="list-group-item">
@@ -27,7 +27,7 @@
                     <div class="btn-group" role="group">
                         @if (movie.IsEditable)
                         {
-                           <a class="btn btn-outline-warning" asp-controller="Home" asp-action="Edit" asp-route-id="@movie.Id"><i class="bi bi-pencil"></i></a>
+                            <a class="btn btn-outline-warning" asp-controller="Home" asp-action="Edit" asp-route-id="@movie.Id"><i class="bi bi-pencil"></i></a>
                         }
                         <a class="btn btn-outline-primary" asp-controller="Home" asp-action="Details" asp-route-id="@movie.Id"><i class="bi bi-info-circle"></i></a>
                     </div>
@@ -36,3 +36,25 @@
         </li>
     }
 </ul>
+<div class="btn-group" role="group">
+    @if (!Model.DisplayedPageNumbers.Contains(1))
+    {
+        <a type="button" class="btn btn-primary" asp-action="Index" asp-route-page=1>1</a>
+        @if (Model.DisplayedPageNumbers.Min() - 1 > 1)
+        {
+            <a type="button" class="btn btn-primary" href="#">...</a>
+        }
+    }
+    @foreach (var pageNumber in Model.DisplayedPageNumbers)
+    {
+        <a type="button" class="btn btn-primary" asp-action="Index" asp-route-page=@pageNumber>@pageNumber</a>
+    }
+    @if (!Model.DisplayedPageNumbers.Contains(Model.LastPageNumber))
+    {
+        @if (Model.DisplayedPageNumbers.Max() < Model.LastPageNumber - 1)
+        {
+            <a type="button" class="btn btn-primary" href="#">...</a>
+        }
+        <a type="button" class="btn btn-primary" asp-action="Index" asp-route-page=@Model.LastPageNumber>@Model.LastPageNumber</a>
+    }
+</div>

@@ -3,6 +3,7 @@ using FilmsCatalog.Models.Movies;
 using FilmsCatalog.Repositories.Movies;
 using Microsoft.AspNetCore.Hosting;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -72,11 +73,38 @@ namespace FilmsCatalog.Services.Movies
             await _rep.EditMovie(movie);
         }
 
-        public async Task<MoviesIndexViewModel> GetAllMovies(string userId)
+        public async Task<MoviesIndexViewModel> GetAllMovies(string userId,  int pageNumber)
         {
-            var movies = await _rep.GetAllMovies();
+            //without pagination
+            //var movies = await _rep.GetAllMovies();
 
-            var VM = new MoviesIndexViewModel();
+            //with pagination
+            int moviesPerPage = 5;
+            int lastPageNumber = (int)Math.Ceiling((double)(await _rep.GetMovieCount()) / moviesPerPage);// = page count
+            if (pageNumber > lastPageNumber)
+            {
+                pageNumber = lastPageNumber;
+            }
+            if (pageNumber < 1)
+            {
+                pageNumber = 1;
+            }
+
+            var pageNumbers = new List<int>();
+            for (int i = Math.Max(1, pageNumber - 2); i <= Math.Min(lastPageNumber, pageNumber + 2); i++)
+            {
+                pageNumbers.Add(i);
+            }
+
+
+            var movies = await _rep.GetMoviePage(pageNumber, moviesPerPage);
+
+            var VM = new MoviesIndexViewModel
+            {
+                LastPageNumber = lastPageNumber,
+                CurrentPageNumber = pageNumber,
+                DisplayedPageNumbers = pageNumbers,
+            };
 
             foreach (var movie in movies)
             {

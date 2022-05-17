@@ -25,11 +25,11 @@ namespace FilmsCatalog.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery]int page = 1)
         {
             var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
 
-            var model = await _movieService.GetAllMovies(userId);
+            var model = await _movieService.GetAllMovies(userId, page);
 
             return View(model);
         }
