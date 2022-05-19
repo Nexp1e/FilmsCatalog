@@ -4,6 +4,7 @@
 }
 
 <h1>Список фильмов</h1>
+<h4>Страница @Model.CurrentPageNumber</h4>
 @if (User.Identity.IsAuthenticated)
 {
     <a class="btn btn-primary mb-3" asp-controller="Home" asp-action="Add">Добавить фильм</a>
