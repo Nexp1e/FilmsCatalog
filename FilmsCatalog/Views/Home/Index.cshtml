@@ -40,7 +40,7 @@
     @if (!Model.DisplayedPageNumbers.Contains(1))
     {
         <a type="button" class="btn btn-primary" asp-action="Index" asp-route-page=1>1</a>
-        @if (Model.DisplayedPageNumbers.Min() - 1 > 1)
+        @if (Model.DisplayedPageNumbers.Any() && Model.DisplayedPageNumbers.Min() - 1 > 1)
         {
             <a type="button" class="btn btn-primary" href="#">...</a>
         }
@@ -49,9 +49,9 @@
     {
         <a type="button" class="btn btn-primary" asp-action="Index" asp-route-page=@pageNumber>@pageNumber</a>
     }
-    @if (!Model.DisplayedPageNumbers.Contains(Model.LastPageNumber))
+    @if (Model.LastPageNumber > 1 && !Model.DisplayedPageNumbers.Contains(Model.LastPageNumber))
     {
-        @if (Model.DisplayedPageNumbers.Max() < Model.LastPageNumber - 1)
+        @if (Model.DisplayedPageNumbers.Any() && Model.DisplayedPageNumbers.Max() < Model.LastPageNumber - 1)
         {
             <a type="button" class="btn btn-primary" href="#">...</a>
         }
